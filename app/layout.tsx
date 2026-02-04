@@ -13,7 +13,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
 	title: {
-		default: 'Kanban Task Management App',
+		default: 'Kanban - Task Management App',
 		template: '%s | Kanban',
 	},
 	description:

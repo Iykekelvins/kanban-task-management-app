@@ -11,7 +11,7 @@
 	--purple-hover: #a8a4ff;
 	--dark-grey: #2b2c37;
 	--medium-grey: #828fa3;
-	--lines: #3e3f4e;
+	--lines: #e4ebfa;
 	--sidebar: hsl(0 0% 98%);
 	--sidebar-foreground: hsl(240 5.3% 26.1%);
 	--sidebar-primary: hsl(240 5.9% 10%);
@@ -25,8 +25,8 @@
 .dark {
 	--background: #20212c;
 	--foreground: #ffffff;
+	--lines: #3e3f4e;
 	--white: #2b2c37;
-	--lines: #e4ebfa;
 	--sidebar: hsl(240 5.9% 10%);
 	--sidebar-foreground: hsl(240 4.8% 95.9%);
 	--sidebar-primary: hsl(224.3 76.3% 48%);
