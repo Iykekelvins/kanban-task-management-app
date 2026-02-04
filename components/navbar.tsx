@@ -2,22 +2,38 @@
 
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
+import { useQuery } from 'convex/react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSidebar } from './ui/sidebar';
 import { EllipsisVertical } from 'lucide-react';
 import { Button } from './ui/button';
 import { Dialog, DialogTrigger } from './ui/dialog';
-import { cn } from '@/lib/utils';
 import { Popover, PopoverTrigger } from './ui/popover';
+import { api } from '@/convex/_generated/api';
+import { cn } from '@/lib/utils';
 
 import Link from 'next/link';
 import Image from 'next/image';
 
 export default function Navbar() {
 	const { open } = useSidebar();
+	const { theme } = useTheme();
+
+	const router = useRouter();
+	const params = useSearchParams();
 
 	const [mounted, setMounted] = useState(false);
 
-	const { theme } = useTheme();
+	const boards = useQuery(api.boards.getBoards);
+
+	useEffect(() => {
+		if (!boards) return;
+
+		if (!params.get('board') && boards.length > 0) {
+			router.push(`/?board=${boards[0].slug}`);
+		}
+	}, [boards, params, router]);
+
 	useEffect(() => {
 		const timeout = setTimeout(() => {
 			setMounted(true);
@@ -81,7 +97,11 @@ export default function Navbar() {
 						</Link>
 					</div>
 
-					<h1 className='text-h-xl text-black'>Platform Launch</h1>
+					<h1 className='text-h-xl text-black'>
+						{boards?.length === 0
+							? 'No Boards'
+							: boards?.find((board) => board.slug === params.get('board'))?.name}
+					</h1>
 				</div>
 
 				<div className='flex items-center gap-4 sm:gap-6'>

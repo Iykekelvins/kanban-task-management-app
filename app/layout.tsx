@@ -39,7 +39,7 @@ export default function RootLayout({
 					<ClerkProvider>
 						<ConvexClientProvider>{children}</ConvexClientProvider>
 					</ClerkProvider>
-					<Toaster position='bottom-center' richColors theme='dark' />
+					<Toaster position='top-right' richColors theme='dark' />
 				</ThemeProvider>
 			</body>
 		</html>

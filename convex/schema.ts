@@ -8,4 +8,25 @@ export default defineSchema({
 		name: v.optional(v.string()),
 		imageUrl: v.optional(v.string()),
 	}).index('by_token', ['tokenIdentifier']),
+
+	boards: defineTable({
+		userId: v.id('users'),
+		name: v.string(),
+		slug: v.string(),
+		columns: v.optional(v.array(v.string())),
+	})
+		.index('by_user', ['userId'])
+		.index('by_user_and_slug', ['userId', 'slug']),
+	tasks: defineTable({
+		boardId: v.id('boards'),
+		title: v.string(),
+		description: v.string(),
+		subtasks: v.array(
+			v.object({
+				title: v.string(),
+				isCompleted: v.boolean(),
+			}),
+		),
+		status: v.string(),
+	}).index('by_board', ['boardId']),
 });
