@@ -4,20 +4,58 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-	--background: oklch(1 0 0);
-	--foreground: oklch(0.145 0 0);
+	--background: #f4f7fd;
+	--foreground: #000112;
+	--white: #ffffff;
+	--purple: #635fc7;
+	--purple-hover: #a8a4ff;
+	--dark-grey: #2b2c37;
+	--medium-grey: #828fa3;
+	--lines: #3e3f4e;
+}
+
+.dark {
+	--background: #20212c;
+	--foreground: #ffffff;
+	--white: #2b2c37;
+	--lines: #e4ebfa;
 }
 
 @theme inline {
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
-}
-
-.dark {
-	--background: oklch(0.145 0 0);
-	--foreground: oklch(0.985 0 0);
+	--color-white: var(--white);
+	--color-purple: var(--purple);
+	--color-purple-hover: var(--purple-hover);
+	--color-dark-grey: var(--dark-grey);
+	--color-medium-grey: var(--medium-grey);
+	--color-lines: var(--lines);
+	--breakpoint-des: 75rem;
+	--text-h-xl: 1.5rem;
+	--text-h-l: 1.125rem;
+	--text-h-m: 0.938rem;
+	--text-h-s: 0.75rem;
+	--text-b-l: 0.813rem;
+	--text-b-m: 0.75rem;
 }
 
 body {
 	font-family: var(--font-plus-jakarta-sans);
+	font-weight: bold;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+main {
+	flex-grow: 1;
+}
+
+button,
+input {
+	font-family: inherit;
+}
+
+button {
+	cursor: pointer;
 }
