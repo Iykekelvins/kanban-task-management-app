@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { Toaster } from 'sonner';
+import { ClerkProvider } from '@clerk/nextjs';
+
+import ConvexClientProvider from '@/providers/convex-client-provider';
 
 import './globals.css';
 
@@ -33,7 +36,9 @@ export default function RootLayout({
 					defaultTheme='light'
 					enableSystem
 					disableTransitionOnChange>
-					{children}
+					<ClerkProvider>
+						<ConvexClientProvider>{children}</ConvexClientProvider>
+					</ClerkProvider>
 					<Toaster position='bottom-center' richColors theme='dark' />
 				</ThemeProvider>
 			</body>
