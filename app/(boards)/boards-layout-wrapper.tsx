@@ -7,10 +7,7 @@ export default function BoardsLayoutWrapper({
 }: {
 	children: React.ReactNode;
 }) {
-	const { isLoading } = useStoreUserEffect();
-	if (isLoading) {
-		return null;
-	}
+	useStoreUserEffect();
 
 	return <>{children}</>;
 }

@@ -10,9 +10,9 @@ export default function SidebarBtn() {
 		<button
 			className={cn(
 				'bg-purple text-[#fff] rounded-r-full',
-				'fixed bottom-8 left-0 py-4.75 pl-4.5 pr-5.5',
+				'fixed bottom-8 left-0 py-4.75 pl-4.5 pr-5.5 hidden sm:block',
 				'transition-all duration-300 ease-in-out hover:bg-purple-hover',
-				!open ? 'translate-x-0' : '-translate-x-full',
+				!open ? 'translate-x-0' : 'sm:-translate-x-full',
 			)}
 			onClick={toggleSidebar}>
 			<svg
