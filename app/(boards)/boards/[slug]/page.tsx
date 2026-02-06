@@ -2,6 +2,8 @@ import { api } from '@/convex/_generated/api';
 import { fetchQuery } from 'convex/nextjs';
 import { Metadata } from 'next';
 
+import Board from '@/_pages/board';
+
 type Props = {
 	params: Promise<{ slug: string }>;
 };
@@ -24,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const Boardpage = () => {
-	return <div>Boardpage</div>;
+	return <Board/>
 };
 
 export default Boardpage;

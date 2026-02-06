@@ -12,7 +12,7 @@ export default function BoardsLayout({ children }: { children: React.ReactNode }
 				<AppSidebar />
 				<div className='w-full flex flex-col'>
 					<Navbar />
-					<main>{children}</main>
+					<main className='flex'>{children}</main>
 					<SidebarBtn />
 				</div>
 			</SidebarProvider>

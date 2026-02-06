@@ -108,7 +108,7 @@ export default function Navbar() {
 
 				<div className='flex items-center gap-4 sm:gap-6'>
 					<Dialog>
-						<DialogTrigger asChild>
+						<DialogTrigger asChild disabled={boards?.length === 0}>
 							<Button className=' h-8 sm:h-12 px-4.5 sm:px-6'>
 								+ <span className='hidden sm:block'>Add New Task</span>
 							</Button>
@@ -118,7 +118,7 @@ export default function Navbar() {
 					<Popover
 						open={openBoardOptionsModal}
 						onOpenChange={setOpenBoardOptionsModal}>
-						<PopoverTrigger asChild>
+						<PopoverTrigger asChild disabled={boards?.length === 0}>
 							<button>
 								<EllipsisVertical className='text-medium-grey' />
 							</button>

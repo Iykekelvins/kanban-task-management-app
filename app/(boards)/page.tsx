@@ -1,5 +1,5 @@
-import Board from '@/_pages/board';
+import Homepage from '@/_pages/homepage';
 
 export default function Home() {
-	return <Board />;
+	return <Homepage/> 
 }
