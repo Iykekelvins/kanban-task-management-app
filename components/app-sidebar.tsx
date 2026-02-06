@@ -19,7 +19,7 @@ import { api } from '@/convex/_generated/api';
 
 import Link from 'next/link';
 import Image from 'next/image';
-import NewBoard from '@/modals/new-board';
+import NewBoard from '@/components/modals/new-board';
 
 export function AppSidebar() {
 	const [mounted, setMounted] = useState(false);

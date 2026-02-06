@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 
 import Link from 'next/link';
 import Image from 'next/image';
+import BoardOptions from '@/components/popovers/board-options';
 
 export default function Navbar() {
 	const { open } = useSidebar();
@@ -23,6 +24,7 @@ export default function Navbar() {
 	const params = useSearchParams();
 
 	const [mounted, setMounted] = useState(false);
+	const [openBoardOptionsModal, setOpenBoardOptionsModal] = useState(false);
 
 	const boards = useQuery(api.boards.getBoards);
 
@@ -113,12 +115,15 @@ export default function Navbar() {
 						</DialogTrigger>
 					</Dialog>
 
-					<Popover>
+					<Popover
+						open={openBoardOptionsModal}
+						onOpenChange={setOpenBoardOptionsModal}>
 						<PopoverTrigger asChild>
 							<button>
 								<EllipsisVertical className='text-medium-grey' />
 							</button>
 						</PopoverTrigger>
+						<BoardOptions onClose={() => setOpenBoardOptionsModal(false)} />
 					</Popover>
 				</div>
 			</nav>

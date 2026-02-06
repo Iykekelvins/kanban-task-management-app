@@ -80,3 +80,70 @@ export const getBoards = query({
 		return boards;
 	},
 });
+
+export const getBoard = query({
+	args: { slug: v.string() },
+	handler: async (ctx, args) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) {
+			throw new Error('Not authenticated');
+		}
+
+		const user = await ctx.db
+			.query('users')
+			.withIndex('by_token', (q) =>
+				q.eq('tokenIdentifier', identity.tokenIdentifier),
+			)
+			.unique();
+		if (!user) {
+			throw new Error('User not found');
+		}
+
+		const board = await ctx.db
+			.query('boards')
+			.withIndex('by_user_and_slug', (q) =>
+				q.eq('userId', user._id).eq('slug', args.slug),
+			)
+			.first();
+
+		return board;
+	},
+});
+
+export const deleteBoard = mutation({
+	args: { id: v.id('boards') },
+	handler: async (ctx, args) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) {
+			throw new Error('Not authenticated');
+		}
+
+		const user = await ctx.db
+			.query('users')
+			.withIndex('by_token', (q) =>
+				q.eq('tokenIdentifier', identity.tokenIdentifier),
+			)
+			.unique();
+		if (!user) {
+			throw new Error('User not found');
+		}
+
+		const board = await ctx.db.get(args.id);
+		if (!board) {
+			throw new Error('Board not found - It may have already been deleted');
+		}
+
+		if (!user || board.userId !== user._id) {
+			throw new Error(
+				"Unauthorized - You don't have permission to delete this board",
+			);
+		}
+
+		await ctx.db.delete(args.id);
+
+		return {
+			success: true,
+			message: 'Board deleted successfully!',
+		};
+	},
+});

@@ -15,6 +15,7 @@
 	--lines: #e4ebfa;
 	--borders: #828fa340;
 	--red: #ea5555;
+	--red-hover: #ff9898;
 }
 
 .dark {
@@ -37,6 +38,7 @@
 	--color-lines: var(--lines);
 	--color-borders: var(--borders);
 	--color-red: var(--red);
+	--color-red-hover: var(--red-hover);
 	--breakpoint-des: 75rem;
 	--text-h-xl: 1.5rem;
 	--text-h-l: 1.125rem;
