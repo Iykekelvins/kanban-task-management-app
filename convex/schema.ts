@@ -18,16 +18,20 @@ export default defineSchema({
 		.index('by_user', ['userId'])
 		.index('by_slug', ['slug'])
 		.index('by_user_and_slug', ['userId', 'slug']),
+
 	tasks: defineTable({
+		userId: v.id('users'),
 		boardId: v.id('boards'),
 		title: v.string(),
 		description: v.string(),
-		subtasks: v.array(
-			v.object({
-				title: v.string(),
-				isCompleted: v.boolean(),
-			}),
+		subtasks: v.optional(
+			v.array(
+				v.object({
+					title: v.string(),
+					isCompleted: v.boolean(),
+				}),
+			),
 		),
 		status: v.string(),
-	}).index('by_board', ['boardId']),
+	}).index('by_user_and_boardId', ['userId', 'boardId']),
 });
