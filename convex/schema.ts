@@ -16,6 +16,7 @@ export default defineSchema({
 		columns: v.optional(v.array(v.string())),
 	})
 		.index('by_user', ['userId'])
+		.index('by_slug', ['slug'])
 		.index('by_user_and_slug', ['userId', 'slug']),
 	tasks: defineTable({
 		boardId: v.id('boards'),

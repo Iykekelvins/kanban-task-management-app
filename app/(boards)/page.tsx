@@ -1,3 +1,5 @@
+import Board from '@/_pages/board';
+
 export default function Home() {
-	return <div>Home</div>;
+	return <Board />;
 }

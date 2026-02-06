@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useQuery } from 'convex/react';
 import { PopoverContent } from '@/components/ui/popover';
 import { Dialog, DialogTrigger } from '../ui/dialog';
@@ -12,11 +12,11 @@ export default function BoardOptions({ onClose }: { onClose: () => void }) {
 	const [openEditBoardModal, setOpenEditBoardModal] = useState(false);
 	const [openDeleteBoardModal, setOpenDeleteBoardModal] = useState(false);
 
-	const params = useSearchParams();
-	const boardSlug = params.get('board') || '';
+	const params = useParams();
+	const boardSlug = params.slug || '';
 
 	const board = useQuery(api.boards.getBoard, {
-		slug: boardSlug,
+		slug: boardSlug as string,
 	});
 
 	return (

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { useQuery } from 'convex/react';
-import { useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import {
 	Sidebar,
 	SidebarContent,
@@ -27,10 +27,10 @@ export function AppSidebar() {
 
 	const { theme, setTheme } = useTheme();
 	const { toggleSidebar } = useSidebar();
-	const params = useSearchParams();
+	const params = useParams();
 
 	const boards = useQuery(api.boards.getBoards);
-	const boardParam = params.get('board');
+	const boardParam = params.slug;
 
 	useEffect(() => {
 		const timeout = setTimeout(() => {

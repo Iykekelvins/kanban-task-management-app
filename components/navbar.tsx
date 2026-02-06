@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { useQuery } from 'convex/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useSidebar } from './ui/sidebar';
 import { EllipsisVertical } from 'lucide-react';
 import { Button } from './ui/button';
@@ -21,7 +21,7 @@ export default function Navbar() {
 	const { theme } = useTheme();
 
 	const router = useRouter();
-	const params = useSearchParams();
+	const params = useParams();
 
 	const [mounted, setMounted] = useState(false);
 	const [openBoardOptionsModal, setOpenBoardOptionsModal] = useState(false);
@@ -31,8 +31,8 @@ export default function Navbar() {
 	useEffect(() => {
 		if (!boards) return;
 
-		if (!params.get('board') && boards.length > 0) {
-			router.push(`/?board=${boards[0].slug}`);
+		if (!params.slug && boards.length > 0) {
+			router.push(`/boards/${boards[0].slug}`);
 		}
 	}, [boards, params, router]);
 
@@ -102,7 +102,7 @@ export default function Navbar() {
 					<h1 className='text-h-xl text-black'>
 						{boards?.length === 0
 							? 'No Boards'
-							: boards?.find((board) => board.slug === params.get('board'))?.name}
+							: boards?.find((board) => board.slug === params.slug)?.name}
 					</h1>
 				</div>
 

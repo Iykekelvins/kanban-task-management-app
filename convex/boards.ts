@@ -110,6 +110,16 @@ export const getBoard = query({
 	},
 });
 
+export const getBoardMetadata = query({
+	args: { slug: v.string() },
+	handler: async (ctx, args) => {
+		return await ctx.db
+			.query('boards')
+			.withIndex('by_slug', (q) => q.eq('slug', args.slug))
+			.first();
+	},
+});
+
 export const editBoard = mutation({
 	args: {
 		id: v.id('boards'),
