@@ -110,12 +110,21 @@ export const getBoard = query({
 	},
 });
 
-export const deleteBoard = mutation({
-	args: { id: v.id('boards') },
+export const editBoard = mutation({
+	args: {
+		id: v.id('boards'),
+		name: v.optional(v.string()),
+		columns: v.optional(v.array(v.string())),
+	},
 	handler: async (ctx, args) => {
 		const identity = await ctx.auth.getUserIdentity();
 		if (!identity) {
 			throw new Error('Not authenticated');
+		}
+
+		const board = await ctx.db.get(args.id);
+		if (!board) {
+			throw new Error('Board not found - It may have been deleted');
 		}
 
 		const user = await ctx.db
@@ -128,9 +137,44 @@ export const deleteBoard = mutation({
 			throw new Error('User not found');
 		}
 
+		if (!user || board.userId !== user._id) {
+			throw new Error(
+				"Unauthorized - You don't have permission to update this board",
+			);
+		}
+
+		const { id, ...updateData } = args;
+		await ctx.db.patch(id, updateData);
+
+		return {
+			success: true,
+			message: 'Board updated successfully!',
+			boardId: id,
+		};
+	},
+});
+
+export const deleteBoard = mutation({
+	args: { id: v.id('boards') },
+	handler: async (ctx, args) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) {
+			throw new Error('Not authenticated');
+		}
+
 		const board = await ctx.db.get(args.id);
 		if (!board) {
 			throw new Error('Board not found - It may have already been deleted');
+		}
+
+		const user = await ctx.db
+			.query('users')
+			.withIndex('by_token', (q) =>
+				q.eq('tokenIdentifier', identity.tokenIdentifier),
+			)
+			.unique();
+		if (!user) {
+			throw new Error('User not found');
 		}
 
 		if (!user || board.userId !== user._id) {

@@ -6,6 +6,7 @@ import { Dialog, DialogTrigger } from '../ui/dialog';
 import { api } from '@/convex/_generated/api';
 
 import DeleteBoard from '../modals/delete-board';
+import NewBoard from '../modals/new-board';
 
 export default function BoardOptions({ onClose }: { onClose: () => void }) {
 	const [openEditBoardModal, setOpenEditBoardModal] = useState(false);
@@ -29,6 +30,13 @@ export default function BoardOptions({ onClose }: { onClose: () => void }) {
 						Edit Board
 					</button>
 				</DialogTrigger>
+				<NewBoard
+					board={board}
+					onClose={() => {
+						onClose();
+						setOpenEditBoardModal(false);
+					}}
+				/>
 			</Dialog>
 			<Dialog open={openDeleteBoardModal} onOpenChange={setOpenDeleteBoardModal}>
 				<DialogTrigger asChild>
