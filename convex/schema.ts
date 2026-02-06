@@ -33,5 +33,5 @@ export default defineSchema({
 			),
 		),
 		status: v.string(),
-	}).index('by_user_and_boardId', ['userId', 'boardId']),
+	}).index('by_user_and_boardId_and_status', ['userId', 'boardId', 'status']),
 });

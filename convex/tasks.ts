@@ -47,7 +47,7 @@ export const createTask = mutation({
 });
 
 export const getTasks = query({
-	args: { id: v.id('boards') },
+	args: { boardId: v.id('boards'), status: v.string() },
 	handler: async (ctx, args) => {
 		const identity = await ctx.auth.getUserIdentity();
 		if (!identity) {
@@ -66,8 +66,11 @@ export const getTasks = query({
 
 		const tasks = await ctx.db
 			.query('tasks')
-			.withIndex('by_user_and_boardId', (q) =>
-				q.eq('userId', user._id).eq('boardId', args.id),
+			.withIndex('by_user_and_boardId_and_status', (q) =>
+				q
+					.eq('userId', user._id)
+					.eq('boardId', args.boardId)
+					.eq('status', args.status),
 			)
 			.collect();
 
