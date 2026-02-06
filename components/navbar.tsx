@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import Image from 'next/image';
 import BoardOptions from '@/components/popovers/board-options';
+import NewTask from './modals/new-task';
 
 export default function Navbar() {
 	const { open } = useSidebar();
@@ -26,6 +27,7 @@ export default function Navbar() {
 
 	const [mounted, setMounted] = useState(false);
 	const [openBoardOptionsModal, setOpenBoardOptionsModal] = useState(false);
+	const [openNewTaskModal, setOpenNewTaskModal] = useState(false);
 
 	const boards = useQuery(api.boards.getBoards);
 	const board = useQuery(api.boards.getBoard, {
@@ -35,7 +37,7 @@ export default function Navbar() {
 	useEffect(() => {
 		if (!boards) return;
 
-		if (!params.slug && boards.length === 1) {
+		if (!params.slug && boards.length > 0) {
 			router.push(`/boards/${boards[0].slug}`);
 		}
 	}, [boards, params, router]);
@@ -111,14 +113,15 @@ export default function Navbar() {
 				</div>
 
 				<div className='flex items-center gap-4 sm:gap-6'>
-					<Dialog>
+					<Dialog open={openNewTaskModal} onOpenChange={setOpenNewTaskModal}>
 						<DialogTrigger
 							asChild
-							disabled={boards?.length === 0 && board?.columns?.length == 0}>
+							disabled={boards?.length === 0 || board?.columns?.length === 0}>
 							<Button className=' h-8 sm:h-12 px-4.5 sm:px-6'>
 								+ <span className='hidden sm:block'>Add New Task</span>
 							</Button>
 						</DialogTrigger>
+						<NewTask board={board} onClose={() => setOpenNewTaskModal(false)} />
 					</Dialog>
 
 					<Popover

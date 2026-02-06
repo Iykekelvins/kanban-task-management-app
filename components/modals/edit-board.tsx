@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useMutation } from 'convex/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog';
@@ -25,6 +23,7 @@ import { toast } from 'sonner';
 import { api } from '@/convex/_generated/api';
 import { z } from 'zod';
 import { X } from 'lucide-react';
+
 import RemoveColumn from './remove-column';
 
 const formSchema = z.object({
@@ -55,69 +54,61 @@ const formSchema = z.object({
 		}),
 });
 
-export default function NewBoard({
+export default function EditBoard({
 	board,
 	onClose,
 }: {
 	board?: BoardProps | undefined | null;
 	onClose: () => void;
 }) {
-	const router = useRouter();
-
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
+		shouldUnregister: true,
 		defaultValues: {
-			name: '',
-			columns: [{ value: 'Todo' }, { value: 'Doing' }, { value: 'Done' }],
+			name: board?.name,
+			columns: board?.columns?.map((column) => ({
+				value: column,
+			})),
 		},
 	});
 
 	const { fields, append, remove } = useFieldArray({
 		control: form.control,
 		name: 'columns',
+		shouldUnregister: true,
 	});
 
-	const [columnToDelete, setColumnToDelete] = useState<number | null>(null);
+	const removeColumn = (idx: number) => {
+		const current = form.getValues('columns') ?? [];
+		const next = current.filter((_, i) => i !== idx);
+
+		form.setValue('columns', next, {
+			shouldDirty: true,
+			shouldValidate: true,
+		});
+	};
+
+	const [openDeleteColumnModal, setOpenDeleteColumnModal] = useState(false);
 
 	const addColumn = () => append({ value: '' });
 
-	const createBoard = useMutation(api.boards.createBoard);
 	const editBoard = useMutation(api.boards.editBoard);
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
 			const columnStrings = values.columns?.map((col) => col.value) || [];
 
-			if (!board) {
-				const result = await createBoard({
-					name: values.name,
-					columns: columnStrings,
-				});
+			const result = await editBoard({
+				id: board?._id,
+				name: values.name,
+				columns: columnStrings,
+			});
 
-				if (result.success) {
-					toast.success(result.message);
-					router.push(`/boards/${result?.slug}`);
-					onClose();
-					form.reset({
-						name: '',
-						columns: [{ value: 'Todo' }, { value: 'Doing' }, { value: 'Done' }],
-					});
-				} else {
-					toast.error(result.message);
-				}
+			if (result.success) {
+				toast.success(result.message);
+				onClose();
 			} else {
-				const result = await editBoard({
-					id: board?._id,
-					name: values.name,
-					columns: columnStrings,
-				});
-
-				if (result.success) {
-					toast.success(result.message);
-					onClose();
-				} else {
-					toast.error(result.message);
-				}
+				toast.error(result.message);
 			}
 		} catch (error) {
 			console.log(error);
@@ -125,22 +116,9 @@ export default function NewBoard({
 		}
 	}
 
-	useEffect(() => {
-		if (board) {
-			form.reset({
-				name: board.name,
-				columns: board.columns?.map((column) => {
-					return {
-						value: column,
-					};
-				}),
-			});
-		}
-	}, [board, form]);
-
 	return (
 		<DialogContent>
-			<DialogTitle>{!board ? 'Add New' : 'Edit'} Board</DialogTitle>
+			<DialogTitle>Edit Board</DialogTitle>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
 					<FormField
@@ -170,34 +148,20 @@ export default function NewBoard({
 											<FormControl>
 												<div className='flex gap-4 items-center'>
 													<Input placeholder='e.g. Todo' {...field} />
-													{!board ? (
-														<button type='button' onClick={() => remove(idx)}>
-															<X className='h-4 w-4 text-medium-grey hover:text-red' />
-														</button>
-													) : (
-														<Dialog
-															open={columnToDelete !== null}
-															onOpenChange={(open) =>
-																!open && setColumnToDelete(null)
-															}>
-															<DialogTrigger asChild>
-																<button
-																	type='button'
-																	onClick={() => setColumnToDelete(idx)}>
-																	<X className='h-4 w-4 text-medium-grey hover:text-red' />
-																</button>
-															</DialogTrigger>
-															<RemoveColumn
-																onRemove={() => {
-																	if (columnToDelete !== null) {
-																		remove(columnToDelete);
-																		setColumnToDelete(null);
-																	}
-																}}
-																onClose={() => setColumnToDelete(null)}
-															/>
-														</Dialog>
-													)}
+
+													<Dialog
+														open={openDeleteColumnModal}
+														onOpenChange={setOpenDeleteColumnModal}>
+														<DialogTrigger asChild>
+															<button type='button'>
+																<X className='h-4 w-4 text-medium-grey hover:text-red' />
+															</button>
+														</DialogTrigger>
+														<RemoveColumn
+															onRemove={() => removeColumn(idx)}
+															onClose={() => setOpenDeleteColumnModal(false)}
+														/>
+													</Dialog>
 												</div>
 											</FormControl>
 											<FormMessage />
@@ -220,11 +184,10 @@ export default function NewBoard({
 						type='submit'
 						disabled={form.formState.isSubmitting}>
 						{form.formState.isSubmitting && <Spinner />}
-						<span>{!board ? 'Create New Board' : 'Save Changes'}</span>
+						<span>Save Changes</span>
 					</Button>
 				</form>
 			</Form>
-			<DialogDescription hidden />
 		</DialogContent>
 	);
 }

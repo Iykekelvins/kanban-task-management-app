@@ -20,8 +20,9 @@ export default function Column({
 }) {
 	const tasksByColumn = useQuery(api.tasks.getTasksByStatus, {
 		boardId,
-		status: column.toLowerCase(),
+		status: column,
 	});
+
 	return (
 		<div key={column} className={cn('min-w-70', idx === 0 && 'ml-6')}>
 			<h2 className='flex items-center gap-3'>

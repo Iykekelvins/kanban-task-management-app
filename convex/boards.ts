@@ -156,6 +156,19 @@ export const editBoard = mutation({
 		const { id, ...updateData } = args;
 		await ctx.db.patch(id, updateData);
 
+		const tasks = await ctx.db
+			.query('tasks')
+			.withIndex('by_user_and_boardId', (q) =>
+				q.eq('userId', user._id).eq('boardId', args.id),
+			)
+			.collect();
+
+		tasks.forEach(async (task) => {
+			if (!args.columns?.includes(task.status)) {
+				await ctx.db.delete(task._id);
+			}
+		});
+
 		return {
 			success: true,
 			message: 'Board updated successfully!',
@@ -192,6 +205,17 @@ export const deleteBoard = mutation({
 				"Unauthorized - You don't have permission to delete this board",
 			);
 		}
+
+		const tasks = await ctx.db
+			.query('tasks')
+			.withIndex('by_user_and_boardId', (q) =>
+				q.eq('userId', user._id).eq('boardId', args.id),
+			)
+			.collect();
+
+		tasks.forEach(async (task) => {
+			await ctx.db.delete(task._id);
+		});
 
 		await ctx.db.delete(args.id);
 
