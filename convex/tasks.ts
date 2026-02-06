@@ -47,6 +47,35 @@ export const createTask = mutation({
 });
 
 export const getTasks = query({
+	args: { boardId: v.id('boards') },
+	handler: async (ctx, args) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) {
+			throw new Error('Not authenticated');
+		}
+
+		const user = await ctx.db
+			.query('users')
+			.withIndex('by_token', (q) =>
+				q.eq('tokenIdentifier', identity.tokenIdentifier),
+			)
+			.unique();
+		if (!user) {
+			throw new Error('User not found');
+		}
+
+		const tasks = await ctx.db
+			.query('tasks')
+			.withIndex('by_user_and_boardId_and_status', (q) =>
+				q.eq('userId', user._id).eq('boardId', args.boardId),
+			)
+			.collect();
+
+		return tasks;
+	},
+});
+
+export const getTasksByStatus = query({
 	args: { boardId: v.id('boards'), status: v.string() },
 	handler: async (ctx, args) => {
 		const identity = await ctx.auth.getUserIdentity();

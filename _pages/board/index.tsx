@@ -9,6 +9,7 @@ import { api } from '@/convex/_generated/api';
 
 import NewBoard from '@/components/modals/new-board';
 import Column from './column';
+import { Spinner } from '@/components/ui/spinner';
 
 const Board = () => {
 	const params = useParams();
@@ -19,6 +20,14 @@ const Board = () => {
 	const board = useQuery(api.boards.getBoard, {
 		slug: boardSlug,
 	});
+
+	if (!board) {
+		return (
+			<div className='flex flex-col items-center justify-center flex-1 p-4 gap-4'>
+				<Spinner className='text-purple' />
+			</div>
+		);
+	}
 
 	if (board?.columns && board?.columns?.length === 0) {
 		return (
@@ -38,11 +47,26 @@ const Board = () => {
 	}
 
 	return (
-		<div className='p-6'>
-			<div className='flex items-start gap-6 overflow-y-auto'>
-				{board?.columns?.map((column) => (
-					<Column column={column} key={column} boardId={board?._id} />
+		<div className='py-6 flex-1 grid'>
+			<div className='flex items-start gap-6 overflow-x-auto flex-1'>
+				{board?.columns?.map((column, idx) => (
+					<Column column={column} key={column} boardId={board?._id} idx={idx} />
 				))}
+				<div
+					className='flex items-center justify-center h-full min-w-70
+					bg-linear-to-b from-slate-100 to-slate-100/50
+				dark:from-slate-800/25 dark:to-slate-800/12
+				  rounded-md mr-6
+				  '>
+					<Dialog open={openEditBoardModal} onOpenChange={setOpenEditBoardModal}>
+						<DialogTrigger asChild>
+							<button className='h-full text-medium-grey text-h-xl'>
+								+ New Column
+							</button>
+						</DialogTrigger>
+						<NewBoard board={board} onClose={() => setOpenEditBoardModal(false)} />
+					</Dialog>
+				</div>
 			</div>
 		</div>
 	);

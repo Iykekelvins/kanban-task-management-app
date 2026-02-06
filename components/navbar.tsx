@@ -22,16 +22,20 @@ export default function Navbar() {
 
 	const router = useRouter();
 	const params = useParams();
+	const boardSlug = params.slug as string;
 
 	const [mounted, setMounted] = useState(false);
 	const [openBoardOptionsModal, setOpenBoardOptionsModal] = useState(false);
 
 	const boards = useQuery(api.boards.getBoards);
+	const board = useQuery(api.boards.getBoard, {
+		slug: boardSlug || '',
+	});
 
 	useEffect(() => {
 		if (!boards) return;
 
-		if (!params.slug && boards.length > 0) {
+		if (!params.slug && boards.length === 1) {
 			router.push(`/boards/${boards[0].slug}`);
 		}
 	}, [boards, params, router]);
@@ -108,7 +112,9 @@ export default function Navbar() {
 
 				<div className='flex items-center gap-4 sm:gap-6'>
 					<Dialog>
-						<DialogTrigger asChild disabled={boards?.length === 0}>
+						<DialogTrigger
+							asChild
+							disabled={boards?.length === 0 && board?.columns?.length == 0}>
 							<Button className=' h-8 sm:h-12 px-4.5 sm:px-6'>
 								+ <span className='hidden sm:block'>Add New Task</span>
 							</Button>

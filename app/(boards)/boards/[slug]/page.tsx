@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const Boardpage = () => {
-	return <Board/>
+	return <Board />;
 };
 
 export default Boardpage;

@@ -95,7 +95,7 @@ export default function NewBoard({
 
 				if (result.success) {
 					toast.success(result.message);
-					router.push(`/?board=${result?.slug}`);
+					router.push(`/boards/${result?.slug}`);
 					onClose();
 					form.reset({
 						name: '',
