@@ -162,6 +162,45 @@ export const editTask = mutation({
 	},
 });
 
+export const updateTaskStatus = mutation({
+	args: {
+		id: v.id('tasks'),
+		status: v.string(),
+	},
+	handler: async (ctx, args) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) {
+			throw new Error('Not authenticated');
+		}
+
+		const task = await ctx.db.get(args.id);
+		if (!task) {
+			throw new Error('Task not found');
+		}
+
+		const user = await ctx.db
+			.query('users')
+			.withIndex('by_token', (q) =>
+				q.eq('tokenIdentifier', identity.tokenIdentifier),
+			)
+			.unique();
+		if (!user) {
+			throw new Error('User not found');
+		}
+
+		if (task.userId !== user._id) {
+			throw new Error('Unauthorized');
+		}
+
+		await ctx.db.patch(args.id, { status: args.status });
+
+		return {
+			success: true,
+			message: 'Task status updated successfully!',
+		};
+	},
+});
+
 export const deleteTask = mutation({
 	args: { id: v.id('tasks') },
 	handler: async (ctx, args) => {
