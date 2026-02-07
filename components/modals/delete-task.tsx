@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useMutation } from 'convex/react';
 import { Button } from '../ui/button';
 import { DialogContent, DialogDescription, DialogTitle } from '../ui/dialog';
@@ -16,7 +15,6 @@ export default function DeleteTask({
 	setOpenDeleteTaskModal: (e: boolean) => void;
 	onClose: () => void;
 }) {
-	const router = useRouter();
 	const [loading, setLoading] = useState(false);
 
 	const deleteTask = useMutation(api.tasks.deleteTask);
@@ -28,7 +26,6 @@ export default function DeleteTask({
 			const result = await deleteTask({ id: task?._id });
 			toast.success(result.message);
 			onClose();
-			router.push('/');
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (error: any) {
 			toast.error(error.message || 'Failed to delete task');
