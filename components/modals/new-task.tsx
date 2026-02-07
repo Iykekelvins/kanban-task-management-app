@@ -127,8 +127,9 @@ export default function NewTask({
 						return {
 							title: col.value,
 							id: col.id,
-							isCompleted: task?.subtasks?.find((task) => task.id === col.id)
-								?.isCompleted as boolean,
+							isCompleted:
+								(task?.subtasks?.find((task) => task.id === col.id)
+									?.isCompleted as boolean) || false,
 						};
 					}) || [];
 
