@@ -14,6 +14,8 @@ import {
 import { Dialog, DialogTrigger } from './ui/dialog';
 import { Switch } from './ui/switch';
 import { Skeleton } from './ui/skeleton';
+import { SignOutButton } from '@clerk/nextjs';
+import { LogOutIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { api } from '@/convex/_generated/api';
 
@@ -124,7 +126,7 @@ export function AppSidebar() {
 					<NewBoard onClose={() => setOpenNewBoardModal(false)} />
 				</Dialog>
 			</SidebarContent>
-			<SidebarFooter className='pb-8 px-6'>
+			<SidebarFooter className='px-6'>
 				<div
 					className='bg-background rounded-md flex items-center 
         justify-center gap-6 py-3.5'>
@@ -164,7 +166,7 @@ export function AppSidebar() {
 
 				<button
 					className={cn(
-						'mt-5.5 flex items-center gap-3.75 h-12 -ml-6 pl-6',
+						'mt-2.5 flex items-center gap-3.75 h-12 -ml-6 pl-6',
 						'transition-all duration-300 ease-in-out rounded-r-full',
 						'hover:bg-purple/10 hover:text-purple dark:hover:bg-[#fff]',
 					)}
@@ -184,6 +186,17 @@ export function AppSidebar() {
 					</svg>
 					<span className='text-medium-grey text-h-m'>Hide Sidebar</span>
 				</button>
+				<SignOutButton>
+					<button
+						className={cn(
+							'flex items-center gap-3.75 h-12 -ml-6 pl-6',
+							'transition-all duration-300 ease-in-out rounded-r-full',
+							'hover:bg-red-hover text-red hover:text-[#fff]',
+						)}>
+						<LogOutIcon />
+						<span className='text-h-m'>Log out</span>
+					</button>
+				</SignOutButton>
 			</SidebarFooter>
 		</Sidebar>
 	);
