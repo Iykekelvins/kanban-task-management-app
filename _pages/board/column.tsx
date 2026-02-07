@@ -1,7 +1,8 @@
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { Id } from '@/convex/_generated/dataModel';
 import { cn } from '@/lib/utils';
+
+import Task from './task';
 
 const COLORS: Record<string, string> = {
 	todo: '#49C4E5',
@@ -11,15 +12,15 @@ const COLORS: Record<string, string> = {
 
 export default function Column({
 	column,
-	boardId,
+	board,
 	idx,
 }: {
 	column: string;
-	boardId: Id<'boards'>;
+	board: BoardProps;
 	idx: number;
 }) {
 	const tasksByColumn = useQuery(api.tasks.getTasksByStatus, {
-		boardId,
+		boardId: board?._id,
 		status: column,
 	});
 
@@ -34,6 +35,12 @@ export default function Column({
 					{column.toUpperCase()} ({tasksByColumn?.length})
 				</span>
 			</h2>
+
+			<ul className='mt-6 flex flex-col gap-5'>
+				{tasksByColumn?.map((task) => (
+					<Task key={task?._id} task={task} board={board} />
+				))}
+			</ul>
 		</div>
 	);
 }

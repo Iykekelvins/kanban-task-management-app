@@ -5,11 +5,11 @@ import { useQuery } from 'convex/react';
 import { useParams } from 'next/navigation';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { api } from '@/convex/_generated/api';
 
 import NewBoard from '@/components/modals/new-board';
 import Column from './column';
-import { Spinner } from '@/components/ui/spinner';
 
 const Board = () => {
 	const params = useParams();
@@ -50,7 +50,7 @@ const Board = () => {
 		<div className='py-6 flex-1 grid'>
 			<div className='flex items-start gap-6 overflow-x-auto flex-1'>
 				{board?.columns?.map((column, idx) => (
-					<Column column={column} key={column} boardId={board?._id} idx={idx} />
+					<Column column={column} key={column} board={board} idx={idx} />
 				))}
 				<div
 					className='flex items-center justify-center h-full min-w-70

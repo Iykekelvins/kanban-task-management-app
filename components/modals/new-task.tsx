@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useMutation } from 'convex/react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,6 +27,8 @@ import {
 	SelectValue,
 } from '../ui/select';
 
+// import crypto from 'crypto';
+
 const formSchema = z.object({
 	title: z.string().min(1, 'Task title is required'),
 	description: z.string().min(1, 'Task description is required'),
@@ -33,6 +36,7 @@ const formSchema = z.object({
 		.array(
 			z.object({
 				value: z.string().min(1, 'Subtask name cannot be empty'),
+				id: z.string(),
 			}),
 		)
 		.optional()
@@ -58,9 +62,11 @@ const formSchema = z.object({
 
 export default function NewTask({
 	board,
+	task,
 	onClose,
 }: {
 	board: BoardProps | null | undefined;
+	task?: TaskProps | null | undefined;
 	onClose: () => void;
 }) {
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -69,7 +75,10 @@ export default function NewTask({
 			title: '',
 			description: '',
 			status: '',
-			subtasks: [{ value: '' }, { value: '' }],
+			subtasks: [
+				{ value: '', id: crypto.randomUUID() },
+				{ value: '', id: crypto.randomUUID() },
+			],
 		},
 	});
 
@@ -78,48 +87,93 @@ export default function NewTask({
 		name: 'subtasks',
 	});
 
-	const addSubtask = () => append({ value: '' });
+	const addSubtask = () => append({ value: '', id: crypto.randomUUID() });
 
 	const createTask = useMutation(api.tasks.createTask);
+	const editTask = useMutation(api.tasks.editTask);
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
 			const subtasks =
 				values.subtasks?.map((col) => {
 					return {
+						id: col.id,
 						title: col.value,
 						isCompleted: false,
 					};
 				}) || [];
 
-			const result = await createTask({
-				boardId: board?._id,
-				title: values.title,
-				description: values.description,
-				status: values.status,
-				subtasks,
-			});
-
-			if (result.success) {
-				toast.success(result?.message);
-				onClose();
-				form.reset({
-					title: '',
-					description: '',
-					status: '',
+			if (!task) {
+				const result = await createTask({
+					boardId: board?._id,
+					title: values.title,
+					description: values.description,
+					status: values.status,
+					subtasks,
 				});
+
+				if (result.success) {
+					toast.success(result?.message);
+					onClose();
+					form.reset({
+						title: '',
+						description: '',
+						status: '',
+					});
+				} else {
+					toast.error(result.message);
+				}
 			} else {
-				toast.error(result.message);
+				const subtasks =
+					values.subtasks?.map((col) => {
+						return {
+							title: col.value,
+							id: col.id,
+							isCompleted: task?.subtasks?.find((task) => task.id === col.id)
+								?.isCompleted as boolean,
+						};
+					}) || [];
+
+				const result = await editTask({
+					id: task._id,
+					title: values.title,
+					description: values.description,
+					status: values.status,
+					subtasks,
+				});
+
+				if (result.success) {
+					toast.success(result?.message);
+					onClose();
+				} else {
+					toast.error(result.message);
+				}
 			}
 		} catch (error) {
 			console.log(error);
-			toast.error('Failed to create task');
+			toast.error('Failed to create/edit task');
 		}
 	}
 
+	useEffect(() => {
+		if (!task) return;
+
+		form.reset({
+			title: task?.title,
+			description: task?.description,
+			subtasks: task?.subtasks?.map((sub) => {
+				return {
+					value: sub?.title,
+					id: sub.id,
+				};
+			}),
+			status: task?.status,
+		});
+	}, [form, task]);
+
 	return (
 		<DialogContent>
-			<DialogTitle>Add New Task</DialogTitle>
+			<DialogTitle>{!task ? 'Add New' : 'Edit'} Task</DialogTitle>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
 					<FormField
@@ -219,7 +273,7 @@ export default function NewTask({
 
 					<Button className='w-full' disabled={form.formState.isSubmitting}>
 						{form.formState.isSubmitting && <Spinner />}
-						Create Task
+						{!task ? 'Create Task' : 'Save Changes'}
 					</Button>
 				</form>
 			</Form>

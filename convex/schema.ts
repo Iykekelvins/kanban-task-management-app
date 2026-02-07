@@ -29,6 +29,7 @@ export default defineSchema({
 				v.object({
 					title: v.string(),
 					isCompleted: v.boolean(),
+					id: v.string(),
 				}),
 			),
 		),
