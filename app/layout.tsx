@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from 'next/font/google';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { Toaster } from 'sonner';
 import { ClerkProvider } from '@clerk/nextjs';
+import { metaDataOptions } from '../lib/metadata';
 
 import ConvexClientProvider from '@/providers/convex-client-provider';
 
@@ -21,6 +22,8 @@ export const metadata: Metadata = {
 	},
 	description:
 		'A simple and efficient Kanban task management application to organize your workflow and boost productivity.',
+	metadataBase: new URL('https://kanban-app-iyke.vercel.app'),
+	...metaDataOptions,
 };
 
 export default function RootLayout({
