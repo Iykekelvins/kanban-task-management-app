@@ -2,7 +2,7 @@
 
 A modern, full-stack task management application built with cutting-edge technologies. Organize your projects with intuitive drag-and-drop functionality and real-time collaboration features.
 
-![Kanban App Preview](preview.png)
+![Kanban App Preview](public/preview.png)
 
 ## ✨ Features
 
