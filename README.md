@@ -100,10 +100,10 @@ A modern, full-stack task management application built with cutting-edge technol
 
 ```
 kanban-app/
-├── app/                    # Next.js app directory
-│   ├── (boards)/       # Board routes
-│   └── layout.tsx         # Root layout
-├── components/            # React components
+├── app/                  # Next.js app directory
+│   ├── (boards)/         # Board routes
+│   └── layout.tsx        # Root layout
+├── components/           # React components
 │   ├── modals/           # Modal components
 │   ├── ui/               # shadcn/ui components
 │   └── ...               # Other components
@@ -113,7 +113,7 @@ kanban-app/
 │   ├── users.ts          # User mutations & queries
 │   └── schema.ts         # Database schema
 ├── lib/                  # Utility functions
-└── public/              # Static assets
+└── public/               # Static assets
 ```
 
 ## 🎯 Key Features Explained
